@@ -1,14 +1,10 @@
-// Global Variables
-
-
-
 byte key = 0;
 
 byte getKey()
 {
     int val = 0;
     byte button = 0;
-    val = analogRead(keypadPin);
+    val = analogRead(KEYPAD_PIN);
     //Serial.println(val);
 
     button = NONE; // use NONE as the default value

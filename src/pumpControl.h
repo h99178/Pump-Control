@@ -10,49 +10,49 @@ void blinkLED(int value, int onoff)
 
     for (int i; i <= value; i++)
     {
-        digitalWrite(ledPin, HIGH);
+        digitalWrite(LED_PIN, HIGH);
         delay(100);
-        digitalWrite(ledPin, LOW);
+        digitalWrite(LED_PIN, LOW);
         delay(100);
     }
     if (onoff > 0)
     {
-        digitalWrite(ledPin, HIGH);
+        digitalWrite(LED_PIN, HIGH);
     }
     else
     {
-        digitalWrite(ledPin, LOW);
+        digitalWrite(LED_PIN, LOW);
     }
 }
 
 void pumpControl()
 {
     //timer to prevent flood
-    if (counter >= timePump)
+    if (counter >= TIME_OUT_PUMP)
     {
         systemStatus = false;
-        digitalWrite(pumpPin, LOW);
+        digitalWrite(PUMP_PIN, LOW);
         Serial.println("Timeout pump");
         Serial.println("System turned OFF");
     }
 
     // read the state of the pushbutton value:
-    sensorState = digitalRead(sensorPin);
-    buttonState = digitalRead(selectButton);
+    sensorState = digitalRead(SENSOR_PIN);
+    buttonState = digitalRead(SELECT_BUTTON);
 
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     if (sensorState == LOW && systemStatus == true)
     {
         // turn LED on:
-        digitalWrite(ledPin, HIGH);
-        digitalWrite(pumpPin, HIGH);
+        digitalWrite(LED_PIN, HIGH);
+        digitalWrite(PUMP_PIN, HIGH);
         Serial.println("Pump activated");
     }
     else
     {
         // turn LED off:
-        digitalWrite(ledPin, LOW);
-        digitalWrite(pumpPin, LOW);
+        digitalWrite(LED_PIN, LOW);
+        digitalWrite(PUMP_PIN, LOW);
         counter=0;
     }
 
@@ -60,7 +60,7 @@ void pumpControl()
     if (buttonState == LOW)
     {
 
-        digitalWrite(ledPin, HIGH);
+        digitalWrite(LED_PIN, HIGH);
     }
 
     if (buttonState == LOW)
@@ -70,7 +70,7 @@ void pumpControl()
         while (true)
         {
             delay(200);
-            if (digitalRead(selectButton) == LOW)
+            if (digitalRead(SELECT_BUTTON) == LOW)
             {
                 menuState++;
             }
@@ -83,7 +83,7 @@ void pumpControl()
         if (menuState == 1)
         {
             systemStatus = false;
-            digitalWrite(pumpPin, LOW);
+            digitalWrite(PUMP_PIN, LOW);
             blinkLED(1, 0);
         }
 

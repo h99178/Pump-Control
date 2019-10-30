@@ -12,16 +12,16 @@ int val = 0;
 void setup()
 {
   // initialize the LED pin as an output:
-  pinMode(ledPin, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
   Serial.begin(9600);
 
   // initialize the pushbutton pin as an input:
   pinMode(analogPin, INPUT_PULLUP);
-  pinMode(selectButton, INPUT_PULLUP); //
-  pinMode(sensorPin, INPUT_PULLUP);    //water level sensor
+  pinMode(SELECT_BUTTON, INPUT_PULLUP); //
+  pinMode(SENSOR_PIN, INPUT_PULLUP);    //water level sensor
 
   lcdInit();
-  //setupRTC();
+ 
 
   // initialize timer1
   noInterrupts(); // disable all interrupts
@@ -40,16 +40,16 @@ ISR(TIMER1_OVF_vect) // interrupt service routine that wraps a user defined func
 
   if (systemStatus == 0)
   {
-    digitalWrite(ledPin, digitalRead(ledPin) ^ 1);
+    digitalWrite(LED_PIN, digitalRead(LED_PIN) ^ 1);
   }
 
   counter = counter + 1;
   //Serial.println(counter);
-  if (systemStatus && counter >= timePump)
+  if (systemStatus && counter >= TIME_OUT_PUMP)
   {
     Serial.println("Stop pump refill " + String(counter));
     systemStatus = false;
-    digitalWrite(pumpPin, LOW);
+    digitalWrite(PUMP_PIN, LOW);
   }
 }
 

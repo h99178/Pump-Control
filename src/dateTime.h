@@ -1,49 +1,19 @@
 #include <Arduino.h>
 #include <stdio.h>
-// #include "DS1302.h"
-//#include <DS3231.h>
 #include "virtuabotixRTC.h"
 
-const int kCePin = 2;   // Chip Enable
-const int kIoPin = 3;   // Input/Output
-const int kSclkPin = 4; // Serial Clock
+// const int kCePin = 2;   // Chip Enable
+// const int kIoPin = 3;   // Input/Output
+// const int kSclkPin = 4; // Serial Clock
 
-// Create a DS1302 object.
-//DS1302 rtc(kCePin, kIoPin, kSclkPin);
-//DS3231  rtc(kIoPin, kSclkPin);
-virtuabotixRTC myrtc(kSclkPin, kIoPin, kCePin);
+// const int kCePin = _defChipEnableRTC;   // Chip Enable
+// const int kIoPin = _defIORTC;   // Input/Output
+// const int kSclkPin = _defCLKRTC; // Serial Clock
 
-// String dayAsString(const Time::Day day)
-// {
-//     switch (day)
-//     {
-//     case Time::kSunday:
-//         return "Sunday";
-//     case Time::kMonday:
-//         return "Monday";
-//     case Time::kTuesday:
-//         return "Tuesday";
-//     case Time::kWednesday:
-//         return "Wednesday";
-//     case Time::kThursday:
-//         return "Thursday";
-//     case Time::kFriday:
-//         return "Friday";
-//     case Time::kSaturday:
-//         return "Saturday";
-//     }
-//     return "(unknown day)";
-// }
+virtuabotixRTC myrtc(CLK_RTC, IO_RTC, CE_RTC);
+//virtuabotixRTC myrtc(kSclkPin, kIoPin, kCePin);
 
-void setupRTC()
-{
 
-    // Initialize a new chip by turning off write protection and clearing the
-    // clock halt flag. These methods needn't always be called. See the DS1302
-    // datasheet for details.
-    //rtc.writeProtect(false);
-    //rtc.halt(false);
-}
 
 String getDate()
 {

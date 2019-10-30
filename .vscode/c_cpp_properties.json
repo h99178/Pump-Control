@@ -8,9 +8,9 @@
             "includePath": [
                 "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/include",
                 "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/src",
-                "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/ArduinoRTClibrary-master",
                 "C:/Users/henrique/.platformio/lib/LiquidCrystal_PCF8574_ID1165/src",
                 "C:/Users/henrique/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/ArduinoRTClibrary-master",
                 "C:/Users/henrique/.platformio/packages/framework-arduinoavr/cores/arduino",
                 "C:/Users/henrique/.platformio/packages/framework-arduinoavr/variants/standard",
                 "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/DS3231",
@@ -29,9 +29,9 @@
                 "path": [
                     "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/include",
                     "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/src",
-                    "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/ArduinoRTClibrary-master",
                     "C:/Users/henrique/.platformio/lib/LiquidCrystal_PCF8574_ID1165/src",
                     "C:/Users/henrique/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                    "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/ArduinoRTClibrary-master",
                     "C:/Users/henrique/.platformio/packages/framework-arduinoavr/cores/arduino",
                     "C:/Users/henrique/.platformio/packages/framework-arduinoavr/variants/standard",
                     "c:/Users/henrique/Documents/PlatformIO/Projects/Pump_Controller/lib/DS3231",
