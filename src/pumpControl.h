@@ -34,7 +34,7 @@ void pumpControl()
         {
             refillPumpRunning = true;
             digitalWrite(LED_PIN, HIGH);
-            digitalWrite(PUMP_PIN, HIGH);
+            digitalWrite(PUMP_PIN, LOW);
             pumpRefillStartTime = millis();
             Serial.println("Pump activated");
             timesRunningResillPump++;
@@ -45,7 +45,7 @@ void pumpControl()
     {
 
         digitalWrite(LED_PIN, LOW);  // turn LED off
-        digitalWrite(PUMP_PIN, LOW); // turn refill pump off:
+        digitalWrite(PUMP_PIN, HIGH); // turn refill pump off:
         refillPumpRunning = false;
     }
 
@@ -75,7 +75,7 @@ void pumpControl()
         if (menuState == 1)
         {
             systemStatus = false;
-            digitalWrite(PUMP_PIN, LOW);
+            digitalWrite(PUMP_PIN, HIGH);
             blinkLED(1, 0);
         }
 
