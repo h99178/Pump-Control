@@ -1,29 +1,34 @@
 #include <Arduino.h>
-//#include "lcd.h"
+#include <EEPROM.h>
 #include "config.h"
-#include "pumpControl.h"
+#include "Header.h"
+#include "lcd.h"
+#include "dateTime.h"
 #include "keypad.h"
+#include "func.h"
 #include "menu.h"
-//#include "dateTime.h"
-
-int analogPin = A0;
-int val = 0;
+#include "pumpControl.h"
 
 void setup()
 {
   // initialize the LED pin as an output:
   pinMode(LED_PIN, OUTPUT);
+  pinMode(PUMP_1_PIN, OUTPUT);
+  pinMode(PUMP_2_PIN, OUTPUT);
+  pinMode(PUMP_3_PIN, OUTPUT);
   Serial.begin(9600);
+  digitalWrite(getPumpPin(1), HIGH);
+  digitalWrite(getPumpPin(2), HIGH);
+  digitalWrite(getPumpPin(3), HIGH);
 
   // initialize the pushbutton pin as an input:
-  pinMode(analogPin, INPUT_PULLUP);
+  pinMode(KEYPAD_PIN, INPUT_PULLUP);
   pinMode(SELECT_BUTTON, INPUT_PULLUP); //
   pinMode(SENSOR_PIN, INPUT_PULLUP);    //water level sensor
 
   lcdInit();
- 
 
-  // initialize timer1
+  //initialize timer1
   noInterrupts(); // disable all interrupts
   TCCR1A = 0;
   TCCR1B = 0;
@@ -32,6 +37,9 @@ void setup()
   TCCR1B |= (1 << CS12);  // 256 prescaler
   TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
   interrupts();           // enable all interrupts
+
+  //update last pump time to prevent dosing pumping on the inicialization
+  inictialiationDosingPump();
 }
 
 ISR(TIMER1_OVF_vect) // interrupt service routine that wraps a user defined function supplied by attachInterrupt
@@ -43,27 +51,25 @@ ISR(TIMER1_OVF_vect) // interrupt service routine that wraps a user defined func
     digitalWrite(LED_PIN, digitalRead(LED_PIN) ^ 1);
   }
 
-  counter = counter + 1;
-  //Serial.println(counter);
-  if (systemStatus && counter >= TIME_OUT_PUMP)
-  {
-    Serial.println("Stop pump refill " + String(counter));
-    systemStatus = false;
-    digitalWrite(PUMP_PIN, LOW);
-  }
+  //stop refill pump if timeout explode
+  interruptRefillPump();
+
+  //stop dosing pump base on time calculated from calibration value
+  interruptDosingPump();
 }
 
 void loop()
 {
 
-  printTime(1);
-  for (size_t i = 0; i < 41; i++)
-  {
-    if (getKey() == ENTER)
-    {
-      menuMain();
-    }
-    delay(25);
-    pumpControl();
-  }
+  //update LCD time and date every 1000 milliseconds
+  updateTimeDateLCD();
+
+  //check key pressed on keyboard
+  checkKeyboad();
+
+  //refill pumo control
+  pumpControl();
+
+  //dosing pump control
+  checkDosingPumpToRun();
 }

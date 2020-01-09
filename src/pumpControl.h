@@ -1,10 +1,4 @@
 
-#include <Arduino.h>
-
-int sensorState = 0; // variable for reading the pushbutton status
-int buttonState = 1;
-int menuState = 0;
-
 void blinkLED(int value, int onoff)
 {
 
@@ -25,37 +19,35 @@ void blinkLED(int value, int onoff)
     }
 }
 
+
 void pumpControl()
 {
-    //timer to prevent flood
-    if (counter >= TIME_OUT_PUMP)
-    {
-        systemStatus = false;
-        digitalWrite(PUMP_PIN, LOW);
-        Serial.println("Timeout pump");
-        Serial.println("System turned OFF");
-    }
-
     // read the state of the pushbutton value:
-    sensorState = digitalRead(SENSOR_PIN);
-    buttonState = digitalRead(SELECT_BUTTON);
+    int sensorState = digitalRead(SENSOR_PIN);
+    int buttonState = digitalRead(SELECT_BUTTON);
 
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     if (sensorState == LOW && systemStatus == true)
     {
         // turn LED on:
-        digitalWrite(LED_PIN, HIGH);
-        digitalWrite(PUMP_PIN, HIGH);
-        Serial.println("Pump activated");
+        if (!refillPumpRunning)
+        {
+            refillPumpRunning = true;
+            digitalWrite(LED_PIN, HIGH);
+            digitalWrite(PUMP_PIN, HIGH);
+            pumpRefillStartTime = millis();
+            Serial.println("Pump activated");
+            timesRunningResillPump++;
+            Serial.println("count pump " + String(timesRunningResillPump));
+        }
     }
     else
     {
-        // turn LED off:
-        digitalWrite(LED_PIN, LOW);
-        digitalWrite(PUMP_PIN, LOW);
-        counter=0;
-    }
 
+        digitalWrite(LED_PIN, LOW);  // turn LED off
+        digitalWrite(PUMP_PIN, LOW); // turn refill pump off:
+        refillPumpRunning = false;
+    }
 
     if (buttonState == LOW)
     {
@@ -65,7 +57,7 @@ void pumpControl()
 
     if (buttonState == LOW)
     {
-        menuState++;
+        int menuState = 1;//++;
 
         while (true)
         {

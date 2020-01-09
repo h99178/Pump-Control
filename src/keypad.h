@@ -1,5 +1,3 @@
-byte key = 0;
-
 byte getKey()
 {
     int val = 0;
@@ -8,27 +6,27 @@ byte getKey()
     //Serial.println(val);
 
     button = NONE; // use NONE as the default value
-    if (val <= 45)
+    if (val <= 50)
     {
         button = LEFT;
     } // left
-    else if ((val >= 60) && (val <= 70))
+    else if ((val >= 55) && (val <= 80))
     {
         button = DOWN;
     } // up
-    else if ((val >= 85) && (val <= 95))
+    else if ((val >= 85) && (val <= 100))
     {
         button = UP;
     } // down
-    else if ((val >= 105) && (val <= 115))
+    else if ((val >= 110) && (val <= 125))
     {
         button = RIGHT;
     } // right
-    else if ((val >= 130) && (val <= 140))
+    else if ((val >= 135) && (val <= 145))
     {
         button = ESC;
     } // select
-    else if ((val >= 150) && (val <= 160))
+    else if ((val >= 155) && (val <= 170))
     {
         button = ENTER;
     } // select

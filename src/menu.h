@@ -1,7 +1,6 @@
-#include "lcd.h"
-#include "dateTime.h"
 
 uint8_t _ui8cursorPosition = 0;
+
 
 void printTime(int caseMenu)
 {
@@ -47,6 +46,15 @@ void printTime(int caseMenu)
         lcd.setCursor(15, 1);
         lcd.print("*");
     }
+}
+
+void statusLCD()
+{
+    printLDCMessage("PD: " + String(timesRunningdosingPump[0]) + "|" + String(timesRunningdosingPump[1]) + "|" + String(timesRunningdosingPump[2]), 0, 0, true);
+    lcd.noBlink();
+    lcd.noCursor();
+    printLDCMessage("PR: " + String(timesRunningResillPump), 0, 1, false);
+    //lcd.setCursor(_ui8cursorPositionTmp, 1);
 }
 
 void editDate(String dateValue, uint8_t _ui8cursorPositionTmp)
@@ -169,6 +177,7 @@ void menuEditDate()
     int dayTmpold = myrtc.dayofmonth;
     int monthTmpold = myrtc.month;
     int yearTmpold = myrtc.year;
+    bool keyPressed = false;
     while (getKey() != NONE)
     {
         /* code */
@@ -187,10 +196,7 @@ void menuEditDate()
             {
                 _ui8cursorPosition = 9;
             }
-            while (getKey() != RIGHT)
-            {
-                /* code */
-            }
+            keyPressed = true;
         }
 
         if (keyValeuStr == LEFT)
@@ -203,10 +209,7 @@ void menuEditDate()
             {
                 _ui8cursorPosition = 1;
             }
-            while (getKey() != LEFT)
-            {
-                /* code */
-            }
+            keyPressed = true;
         }
 
         if (keyValeuStr == UP)
@@ -238,14 +241,12 @@ void menuEditDate()
             {
                 yearTmp++;
             }
-            while (getKey() != UP)
-            {
-                /* code */
-            }
+            keyPressed = true;
         }
 
         if (keyValeuStr == DOWN)
         {
+            Serial.println("DOWN Clicked");
             if (_ui8cursorPosition == 1)
             {
                 if (dayTmp == 1)
@@ -272,28 +273,17 @@ void menuEditDate()
             {
                 yearTmp--;
             }
-            while (getKey() != DOWN)
-            {
-                /* code */
-            }
+            keyPressed = true;
         }
 
         if (keyValeuStr == ESC)
         {
-            while (getKey() == ESC)
-            {
-                /* code */
-            }
             break;
         }
 
         if (keyValeuStr == ENTER)
         {
             setDateTime(secTmp, minTmp, hourTmp, 1, dayTmp, monthTmp, yearTmp);
-            while (getKey() == ENTER)
-            {
-                /* code */
-            }
             break;
         }
 
@@ -307,8 +297,15 @@ void menuEditDate()
             _ui8cursorPositiontmp = _ui8cursorPosition;
         }
 
-        //editDate(funcPreareDate(dayTmp, monthTmp, yearTmp), _ui8cursorPosition);
-        //delay(100);
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE);
+            // {
+            //     /* code */
+            // }
+        }
+
     }
 }
 
@@ -325,6 +322,8 @@ void menuEditTime()
     int minTmp = myrtc.minutes;
     int secTmp = myrtc.seconds;
 
+    bool keyPressed = false;
+
     int hourTmpOld = myrtc.hours;
     int minTmpOld = myrtc.minutes;
     int secTmpOld = myrtc.seconds;
@@ -338,11 +337,6 @@ void menuEditTime()
         byte keyValeuStr = getKey();
         if (keyValeuStr == RIGHT)
         {
-            while (getKey() == RIGHT)
-            {
-                Serial.println("Right " + String(_ui8cursorPosition));
-                delay(100);
-            }
 
             if (_ui8cursorPosition == 4)
             {
@@ -352,15 +346,11 @@ void menuEditTime()
             {
                 _ui8cursorPosition = 4;
             }
+            keyPressed = true;
         }
 
         if (keyValeuStr == LEFT)
         {
-            while (getKey() == LEFT)
-            {
-                Serial.println("Left " + String(_ui8cursorPosition));
-                delay(100);
-            }
 
             if (_ui8cursorPosition == 7)
             {
@@ -370,14 +360,11 @@ void menuEditTime()
             {
                 _ui8cursorPosition = 1;
             }
+            keyPressed = true;
         }
 
         if (keyValeuStr == UP)
         {
-            while (getKey() == UP)
-            {
-                /* code */
-            }
             Serial.println("UP Clicked");
             if (_ui8cursorPosition == 1)
             {
@@ -412,14 +399,12 @@ void menuEditTime()
                     secTmp++;
                 }
             }
+            keyPressed = true;
         }
 
         if (keyValeuStr == DOWN)
         {
-            while (getKey() == DOWN)
-            {
-                /* code */
-            }
+            Serial.println("DOWN Clicked");
 
             if (_ui8cursorPosition == 1)
             {
@@ -454,10 +439,12 @@ void menuEditTime()
                     secTmp--;
                 }
             }
+            keyPressed = true;
         }
 
         if (keyValeuStr == ESC)
         {
+            Serial.println("ESC Clicked");
             while (getKey() == ESC)
             {
                 /* code */
@@ -468,6 +455,7 @@ void menuEditTime()
         if (keyValeuStr == ENTER)
         {
             setDateTime(secTmp, minTmp, hourTmp, 1, dayTmp, monthTmp, yearTmp);
+            Serial.println("ENTER Clicked");
             while (getKey() == ENTER)
             {
                 /* code */
@@ -484,6 +472,15 @@ void menuEditTime()
             minTmpOld = minTmp;
             secTmpOld = secTmp;
             _ui8cursorPositionOld = _ui8cursorPosition;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
         }
 
         //delay(100);
@@ -520,7 +517,7 @@ void menuEditPump1()
     while (true)
     {
         byte keyValeuStr = getKey();
-        counter = 0;
+        //counter = 0;
 
         if (keyValeuStr == LEFT)
         {
@@ -620,6 +617,10 @@ void callMenu(int menuNumber)
         editPump(1);
         Serial.println("Pump Menu 2");
         break;
+    case 5:
+        Serial.println("Status menu");
+        statusLCD();
+        break;
 
     default:
         break;
@@ -645,7 +646,11 @@ void callSelectedMenu(int menuNumber)
         break;
     case 4:
         Serial.println("Edit pump menu");
-        menuEditPump2();
+        menuSelectPumpConfig();
+        break;
+    case 5:
+        Serial.println("Status menu");
+        statusLCD();
         break;
 
     default:
@@ -656,14 +661,17 @@ void callSelectedMenu(int menuNumber)
 void menuMain()
 {
     int pageNumber = 1;
-    int numberOfmenu = 4; //quantidade de menus na funcao callMenu()
+    int numberOfmenu = 5; //quantidade de menus na funcao callMenu()
+    Serial.println("ENTER Clicked");
+
+    while (getKey() == ENTER)
+    {
+        Serial.println("ENTER ######");
+        delay(100);
+    }
 
     while (pageNumber != 0)
     {
-        while (getKey() != NONE)
-        {
-            /* code */
-        }
 
         callMenu(pageNumber);
         while (true)
@@ -692,5 +700,761 @@ void menuMain()
                 break;
             }
         }
+        while (getKey() != NONE)
+        {
+            //delay(50);
+        }
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//menu calibration pump
+//
+//******************************************************************
+
+//function used for pump calibration and configuration
+void editPumpCal(uint8_t _ui8cursorPositionTmp)
+{
+
+    printLDCMessage("Select Pump:", 0, 0, true);
+    lcd.blink();
+    lcd.cursor();
+    printLDCMessage("1   2   3", 0, 1, false);
+    lcd.setCursor(_ui8cursorPositionTmp, 1);
+}
+
+void PumpCalLCD(uint8_t _ui8valueCalibrate, uint8_t pumpNumber)
+{
+
+    printLDCMessage("Pn Correct Fluid", 0, 0, true);
+    lcd.noBlink();
+    lcd.noCursor();
+    printLDCMessage("P:" + (String)pumpNumber + " 100ml = " + (String)_ui8valueCalibrate, 0, 1, false);
+}
+
+void pumpCalibrate(uint8_t _ui8pumpNumber)
+{
+
+    Serial.println("Calibrate pump " + _ui8pumpNumber);
+
+    long timeStartCal = 0;
+
+    uint8_t _ui8valueCal = EEPROM.read(getPumpCalAddress(_ui8pumpNumber));
+    uint8_t _ui8valueCalOld = _ui8valueCal;
+    PumpCalLCD(_ui8valueCal, _ui8pumpNumber);
+
+    bool keyPressed = false;
+    bool startCalibration = false;
+    bool finishCalibration = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+
+        if (startCalibration)
+        {
+            _ui8valueCal = int((millis() - timeStartCal) / 1000);
+        }
+
+        if (keyValeuStr == UP)
+        {
+            Serial.println("UP Clicked");
+            //
+            if (startCalibration)
+            {
+
+                Serial.println("Stop calibration");
+                startCalibration = false;
+                finishCalibration = true;
+                _ui8valueCal = int((millis() - timeStartCal) / 1000);
+
+                digitalWrite(getPumpPin(_ui8pumpNumber), HIGH);
+            }
+            else
+            {
+                Serial.println("Start calibration");
+                timeStartCal = millis();
+                startCalibration = true;
+                finishCalibration = false;
+                digitalWrite(getPumpPin(_ui8pumpNumber), LOW);
+            }
+
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == DOWN)
+        {
+            Serial.println("DOWN Clicked");
+            if (startCalibration)
+            {
+
+                Serial.println("Stop calibration");
+                startCalibration = false;
+                finishCalibration = true;
+                _ui8valueCal = int((millis() - timeStartCal) / 1000);
+
+                digitalWrite(getPumpPin(_ui8pumpNumber), LOW);
+            }
+            else
+            {
+                Serial.println("Start calibration");
+                timeStartCal = millis();
+                startCalibration = true;
+                finishCalibration = false;
+                digitalWrite(getPumpPin(_ui8pumpNumber), HIGH);
+            }
+
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+            if (finishCalibration)
+            {
+                EEPROM.update(getPumpCalAddress(_ui8pumpNumber), _ui8valueCal);
+            }
+
+            break;
+        }
+
+        if (_ui8valueCalOld != _ui8valueCal && startCalibration)
+        {
+            /* code */
+            Serial.println("Pump value cal" + (String)_ui8valueCal);
+            PumpCalLCD(_ui8valueCal, _ui8pumpNumber);
+            _ui8valueCalOld = _ui8valueCal;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+        delay(100);
+    }
+}
+
+void menuSelectPumpCal()
+{
+    Serial.println("Func Cal Pump");
+    editPumpCal(0);
+    _ui8cursorPosition = 0;
+    uint8_t _ui8cursorPositionOld = _ui8cursorPosition;
+
+    bool keyPressed = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+        if (keyValeuStr == RIGHT)
+        {
+
+            Serial.println("RIGHT Clicked");
+            if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 8;
+            }
+            else if (_ui8cursorPosition == 0)
+            {
+                _ui8cursorPosition = 4;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == LEFT)
+        {
+            Serial.println("LEFT Clicked");
+            if (_ui8cursorPosition == 8)
+            {
+                _ui8cursorPosition = 4;
+            }
+            else if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 0;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == UP)
+        {
+            Serial.println("UP Clicked");
+            //
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == DOWN)
+        {
+            Serial.println("DOWN Clicked");
+
+            //
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+
+            if (_ui8cursorPosition == 0)
+            {
+                pumpCalibrate(1);
+            }
+
+            if (_ui8cursorPosition == 4)
+            {
+                pumpCalibrate(2);
+            }
+
+            if (_ui8cursorPosition == 8)
+            {
+                pumpCalibrate(3);
+            }
+
+            break;
+        }
+
+        if (_ui8cursorPositionOld != _ui8cursorPosition)
+        {
+            /* code */
+            editPumpCal(_ui8cursorPosition);
+            _ui8cursorPositionOld = _ui8cursorPosition;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+
+        //delay(100);
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//menu pump configuration
+//
+//******************************************************************
+
+void pumpConfigMilliliterLCD(uint8_t _ui8milliliter, uint8_t pumpNumber)
+{
+    //Pn Dosing Volume:
+    // Num: 1 -- 0010ml
+    printLDCMessage("Pn Dosing Volume:", 0, 0, true);
+    lcd.noBlink();
+    lcd.noCursor();
+    printLDCMessage("P:" + (String)pumpNumber + " -- " + (String)_ui8milliliter + "ml", 0, 1, false);
+}
+
+void pumpDosingDay(uint8_t _ui8timesDay, uint8_t pumpNumber)
+{
+    // Times a Days:
+    // For: 0 (0~30)
+    printLDCMessage("Times a Day:", 0, 0, true);
+    lcd.noBlink();
+    lcd.noCursor();
+    printLDCMessage("P:" + (String)pumpNumber + " -- " + (String)_ui8timesDay + " Times", 0, 1, false);
+}
+
+void pumpConfigTimesDay(uint8_t _ui8pumpNumber)
+{
+
+    Serial.println("Configuration pump times a day " + _ui8pumpNumber);
+
+    uint8_t _ui8valueTimesDay = EEPROM.read(getPumpTimesDayAddress(_ui8pumpNumber));
+    uint8_t _ui8valueTimesDayOld = _ui8valueTimesDay;
+    //myrtc.updateTime();
+    pumpDosingDay(_ui8valueTimesDay, _ui8pumpNumber);
+
+    bool keyPressed = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+
+        if (keyValeuStr == UP)
+        {
+            Serial.println("UP Clicked");
+            //
+            _ui8valueTimesDay = _ui8valueTimesDay + 1;
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == DOWN)
+        {
+            Serial.println("DOWN Clicked");
+            if (_ui8valueTimesDay > 0)
+            {
+                _ui8valueTimesDay = _ui8valueTimesDay - 1;
+            }
+            else
+            {
+                _ui8valueTimesDay = 255;
+            }
+
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+
+            EEPROM.update(getPumpTimesDayAddress(_ui8pumpNumber), _ui8valueTimesDay);
+
+            break;
+        }
+
+        if (_ui8valueTimesDayOld != _ui8valueTimesDay)
+        {
+            /* code */
+            Serial.println("Pump value ML" + (String)_ui8valueTimesDay);
+            pumpDosingDay(_ui8valueTimesDay, _ui8pumpNumber);
+            _ui8valueTimesDayOld = _ui8valueTimesDay;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+        delay(100);
+    }
+}
+
+void pumpConfigMilliter(uint8_t _ui8pumpNumber)
+{
+
+    Serial.println("Configuration pump milliliter " + _ui8pumpNumber);
+
+    uint8_t _ui8valueMl = EEPROM.read(getPumpMilliliterAddress(_ui8pumpNumber));
+    uint8_t _ui8valueMlOld = _ui8valueMl;
+    myrtc.updateTime();
+    pumpConfigMilliliterLCD(_ui8valueMl, _ui8pumpNumber);
+
+    bool keyPressed = false;
+    // bool startCalibration = false;
+    // bool finishCalibration = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+
+        if (keyValeuStr == UP)
+        {
+            Serial.println("UP Clicked");
+            //
+            _ui8valueMl = _ui8valueMl + 1;
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == DOWN)
+        {
+            Serial.println("DOWN Clicked");
+            if (_ui8valueMl > 0)
+            {
+                _ui8valueMl = _ui8valueMl - 1;
+            }
+            else
+            {
+                _ui8valueMl = 255;
+            }
+
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+
+            EEPROM.update(getPumpMilliliterAddress(_ui8pumpNumber), _ui8valueMl);
+            pumpConfigTimesDay(_ui8pumpNumber);
+            break;
+        }
+
+        if (_ui8valueMlOld != _ui8valueMl)
+        {
+            /* code */
+            Serial.println("Pump value ML" + (String)_ui8valueMl);
+            pumpConfigMilliliterLCD(_ui8valueMl, _ui8pumpNumber);
+            _ui8valueMlOld = _ui8valueMl;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+        delay(100);
+    }
+}
+
+void menuSelectPumpConfig()
+{
+    Serial.println("Func config Pump");
+    editPumpCal(0);
+    _ui8cursorPosition = 0;
+    uint8_t _ui8cursorPositionOld = _ui8cursorPosition;
+
+    bool keyPressed = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+        if (keyValeuStr == RIGHT)
+        {
+
+            Serial.println("RIGHT Clicked");
+            if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 8;
+            }
+            else if (_ui8cursorPosition == 0)
+            {
+                _ui8cursorPosition = 4;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == LEFT)
+        {
+            Serial.println("LEFT Clicked");
+            if (_ui8cursorPosition == 8)
+            {
+                _ui8cursorPosition = 4;
+            }
+            else if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 0;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+
+            if (_ui8cursorPosition == 0)
+            {
+                pumpConfigMilliter(1);
+            }
+
+            if (_ui8cursorPosition == 4)
+            {
+                pumpConfigMilliter(2);
+            }
+
+            if (_ui8cursorPosition == 8)
+            {
+                pumpConfigMilliter(3);
+            }
+
+            break;
+        }
+
+        if (_ui8cursorPositionOld != _ui8cursorPosition)
+        {
+            /* code */
+            editPumpCal(_ui8cursorPosition);
+            _ui8cursorPositionOld = _ui8cursorPosition;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+
+        //delay(100);
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//menu pump run
+//
+//******************************************************************
+
+void pumpRunLCD(uint8_t pumpNumber, String status)
+{
+    //Pn Dosing Volume:
+    // Num: 1 -- 0010ml
+    printLDCMessage("Pump rum:", 0, 0, true);
+    lcd.noBlink();
+    lcd.noCursor();
+    printLDCMessage("P:" + (String)pumpNumber + " -- " + status, 0, 1, false);
+}
+
+void pumpRun(uint8_t _ui8pumpNumber)
+{
+
+    Serial.println("Run pump  " + _ui8pumpNumber);
+
+    pumpRunLCD(_ui8pumpNumber, "OFF");
+
+    bool keyPressed = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+
+        if (keyValeuStr == UP)
+        {
+            Serial.println("UP Clicked");
+            //
+            digitalWrite(getPumpPin(_ui8pumpNumber), LOW);
+            pumpRunLCD(_ui8pumpNumber, "ON");
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == DOWN)
+        {
+            Serial.println("DOWN Clicked");
+            digitalWrite(getPumpPin(_ui8pumpNumber), HIGH);
+            pumpRunLCD(_ui8pumpNumber, "OFF");
+
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            digitalWrite(getPumpPin(_ui8pumpNumber), HIGH);
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+        delay(100);
+    }
+}
+
+void menuSelectPumpRun()
+{
+    Serial.println("Func config Pump");
+    editPumpCal(0);
+    _ui8cursorPosition = 0;
+    uint8_t _ui8cursorPositionOld = _ui8cursorPosition;
+
+    bool keyPressed = false;
+
+    while (getKey() != NONE)
+    {
+        /* code */
+    }
+    while (true)
+    {
+        byte keyValeuStr = getKey();
+        if (keyValeuStr == RIGHT)
+        {
+
+            Serial.println("RIGHT Clicked");
+            if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 8;
+            }
+            else if (_ui8cursorPosition == 0)
+            {
+                _ui8cursorPosition = 4;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == LEFT)
+        {
+            Serial.println("LEFT Clicked");
+            if (_ui8cursorPosition == 8)
+            {
+                _ui8cursorPosition = 4;
+            }
+            else if (_ui8cursorPosition == 4)
+            {
+                _ui8cursorPosition = 0;
+            }
+            keyPressed = true;
+        }
+
+        if (keyValeuStr == ESC)
+        {
+            Serial.println("ESC Clicked");
+            while (getKey() == ESC)
+            {
+                /* code */
+            }
+            break;
+        }
+
+        if (keyValeuStr == ENTER)
+        {
+            Serial.println("ENTER Clicked");
+            while (getKey() == ENTER)
+            {
+                /* code */
+            }
+
+            if (_ui8cursorPosition == 0)
+            {
+                pumpRun(1);
+            }
+
+            if (_ui8cursorPosition == 4)
+            {
+                pumpRun(2);
+            }
+
+            if (_ui8cursorPosition == 8)
+            {
+                pumpRun(3);
+            }
+
+            break;
+        }
+
+        if (_ui8cursorPositionOld != _ui8cursorPosition)
+        {
+            /* code */
+            editPumpCal(_ui8cursorPosition);
+            _ui8cursorPositionOld = _ui8cursorPosition;
+        }
+
+        if (keyPressed)
+        {
+            keyPressed = false;
+            while (getKey() != NONE)
+            {
+                /* code */
+            }
+        }
+
+        //delay(100);
     }
 }
